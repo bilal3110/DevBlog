@@ -1,0 +1,36 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+:root {
+  --bg-light: #ffff;
+  --bg-dark: #000;
+  --text-light: #000;
+  --text-dark: #fff;
+  --accent: #42b883;
+}
+
+body {
+  min-height: 100vh;
+  font-family: "Roboto", sans-serif;
+  background: var(--bg-dark);
+  color: var(--text-dark);
+}
+
+body.light-theme {
+  background: var(--bg-light);
+  color: var(--text-light);
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+}
+
+body a{
+  cursor: pointer;
+}
+
+::selection{
+  background-color: var(--accent);
+}
