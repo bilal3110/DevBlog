@@ -1,60 +1,276 @@
-# frontend
+# DevBlogs
 
-This template should help get you started developing with Vue 3 in Vite.
+DevBlogs is a developer-focused blogging and knowledge-sharing platform built with a Laravel API backend and a Vue 3 frontend. It is designed as a place where developers can publish technical posts, discover content by tags, interact through likes and comments, follow other writers, and receive notifications when people engage with their work.
 
-## Recommended IDE Setup
+## Problem It Solves
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+Developers often share knowledge across disconnected channels: social feeds, long-form blogs, chat communities, snippets, and personal portfolios. That makes useful technical writing harder to discover, harder to organize, and harder to connect back to the people creating it.
 
-## Customize configuration
+DevBlogs solves this by bringing publishing, discovery, and social engagement into one focused experience:
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+- Writers can create structured technical posts with rich text, images, and tags.
+- Readers can browse posts, explore trending topics, and interact with content.
+- Authors get feedback through likes, comments, follows, shares, and notifications.
+- Profiles can connect writing to a developer's GitHub and portfolio presence.
 
-## Project Setup
+## Vision
 
-```sh
+The vision for DevBlogs is to become a lightweight community platform for developers who want something more focused than a generic social network and more interactive than a static blog. The long-term direction is a product where developers can build a reputation through useful writing, follow topics they care about, discover emerging technical conversations, and keep their public developer identity connected in one place.
+
+## Current Features
+
+- User registration, login, and token-based logout with Laravel Sanctum.
+- User profile fields for name, email, bio, avatar, GitHub URL, and portfolio URL.
+- Blog post creation, editing, deletion, listing, and slug-based lookup.
+- Unique post slugs generated from titles.
+- Optional cover image upload for posts.
+- Rich text editor on the frontend using Quill.
+- Tag creation and post-tag syncing.
+- Explore page with top/all tag views.
+- Trending tags API based on posts created within the last seven days.
+- Like and unlike support for posts.
+- Comment creation, listing, editing, and deletion.
+- Follow and unfollow support between users.
+- Follower and following count/list endpoints.
+- Notification records for likes, comments, and follows.
+- Mark one notification or all notifications as read.
+- Share tracking by platform and share-link generation.
+- Vue frontend layout with left navigation, main content, and right sidebar.
+- Frontend routes for home, explore, create post, and notifications.
+
+## Tech Stack
+
+**Backend**
+
+- PHP 8.1+
+- Laravel 10
+- Laravel Sanctum for API token authentication
+- Eloquent ORM and Laravel migrations
+- MySQL-compatible database
+- Scribe for API documentation support
+- PHPUnit for backend testing
+- Laravel Pint for code style
+
+**Frontend**
+
+- Vue 3
+- Vite
+- Vue Router
+- Pinia
+- Vue Quill / Quill rich text editing
+- Vitest for unit testing
+- Playwright for end-to-end testing
+- ESLint and Prettier
+
+## Project Structure
+
+```text
+DevBlogs/
+|-- backend/          # Laravel API application
+|   |-- app/
+|   |-- database/
+|   |-- routes/
+|   `-- tests/
+|-- frontend/         # Vue 3 + Vite application
+|   |-- src/
+|   |-- e2e/
+|   `-- public/
+|-- vendor/           # Composer dependencies currently present in the workspace
+`-- README.md
+```
+
+## Backend Overview
+
+The backend exposes a JSON API from `backend/routes/api.php`.
+
+Important domains:
+
+- `UserController`: register users, login, logout, list/update/delete users.
+- `PostController`: create, list, update, delete, and show blog posts.
+- `CommentController`: add, list, edit, and delete post comments.
+- `LikeController`: toggle post likes and list likes for a post.
+- `FollowerController`: follow/unfollow users and list followers/following.
+- `NotificationController`: list notifications and mark them as read.
+- `TagsController`: list tags, get posts by tag, and calculate trending tags.
+- `ShareController`: track post shares and generate share links.
+
+Main data models:
+
+- `User`
+- `Blog`
+- `Tags`
+- `BlogTags`
+- `Comments`
+- `Likes`
+- `Follows`
+- `Notifications`
+- `Share`
+
+## API Highlights
+
+Public endpoints:
+
+```text
+POST /api/users/create
+POST /api/login
+GET  /api/posts
+GET  /api/posts/show/{slug}
+GET  /api/users/followers/{id}
+GET  /api/users/following/{id}
+```
+
+Authenticated endpoints use Sanctum tokens and include:
+
+```text
+POST   /api/logout
+GET    /api/users
+PATCH  /api/users/update/{id}
+DELETE /api/users/delete/{id}
+
+POST   /api/posts/create
+PATCH  /api/posts/update/{id}
+DELETE /api/posts/delete/{id}
+
+POST   /api/posts/comments/create/{id}
+GET    /api/posts/comments/show/{id}
+PATCH  /api/posts/comments/edit/{id}
+DELETE /api/posts/comments/delete/{id}
+
+POST   /api/posts/likes/create/{id}
+GET    /api/posts/likes/show/{id}
+
+POST   /api/users/follow/{id}
+
+GET    /api/notifications
+POST   /api/notifications/{id}/read
+POST   /api/notifications/read/all
+
+GET    /api/tags
+GET    /api/tags/posts/{id}
+GET    /api/tags/trending
+
+POST   /api/post/share/{id}
+GET    /api/post/share/link/{id}
+```
+
+## Frontend Overview
+
+The Vue app is organized around a persistent three-column layout:
+
+- Left sidebar: app navigation, logo, profile shortcut, settings/logout links.
+- Main area: routed views.
+- Right sidebar: trending tags and people suggestions.
+
+Main frontend routes:
+
+```text
+/               Home feed
+/explore        Tag and user discovery
+/createpost     Rich-text post composer
+/notifications  Notifications list
+```
+
+Some frontend components currently use sample/static data while the API layer is being connected. The backend already contains the main endpoints needed to power those screens.
+
+## Local Setup
+
+### Prerequisites
+
+- PHP 8.1 or newer
+- Composer
+- Node.js and npm
+- MySQL or a compatible database
+
+### Backend
+
+```bash
+cd backend
+composer install
+copy .env.example .env
+php artisan key:generate
+```
+
+Update the database values in `backend/.env`:
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=devblogs
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+Run migrations and start the API:
+
+```bash
+php artisan migrate
+php artisan storage:link
+php artisan serve
+```
+
+By default, the backend runs at:
+
+```text
+http://127.0.0.1:8000
+```
+
+### Frontend
+
+```bash
+cd frontend
 npm install
 ```
 
-### Compile and Hot-Reload for Development
+Create `frontend/.env` and point the app to the Laravel API:
 
-```sh
+```env
+VITE_API_BASE_URL=http://127.0.0.1:8000/api
+```
+
+Start the frontend:
+
+```bash
 npm run dev
 ```
 
-### Compile and Minify for Production
+## Testing And Quality
 
-```sh
-npm run build
+Backend:
+
+```bash
+cd backend
+php artisan test
+./vendor/bin/pint
 ```
 
-### Run Unit Tests with [Vitest](https://vitest.dev/)
+Frontend:
 
-```sh
+```bash
+cd frontend
 npm run test:unit
-```
-
-### Run End-to-End Tests with [Playwright](https://playwright.dev)
-
-```sh
-# Install browsers for the first run
-npx playwright install
-
-# When testing on CI, must build the project first
-npm run build
-
-# Runs the end-to-end tests
 npm run test:e2e
-# Runs the tests only on Chromium
-npm run test:e2e -- --project=chromium
-# Runs the tests of a specific file
-npm run test:e2e -- tests/example.spec.ts
-# Runs the tests in debug mode
-npm run test:e2e -- --debug
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
 npm run lint
+npm run build
 ```
+
+## Current Status
+
+DevBlogs has a functional Laravel API foundation with authentication, posts, tags, likes, comments, follows, notifications, and sharing. The Vue frontend has the main layout and screens in place, including a rich-text post creation UI, but several components still use placeholder data and need full API integration.
+
+## Roadmap
+
+- Connect all frontend screens to the Laravel API.
+- Add dedicated login, registration, profile, settings, and post detail pages.
+- Improve authorization so users can only edit/delete their own content where appropriate.
+- Add feed personalization based on followed users and selected tags.
+- Add search for posts, users, and tags.
+- Add pagination for feeds, comments, notifications, and tag pages.
+- Add richer notification UX and possibly real-time updates.
+- Add stronger validation, error handling, and empty/loading states in the frontend.
+- Expand automated tests for API behavior and frontend workflows.
+- Generate and publish API documentation from Scribe.
+
+## Why This Project Matters
+
+DevBlogs is not just a CRUD blog. Its value comes from combining content publishing with developer-specific discovery and social feedback. The project creates a foundation for a community where technical posts are easier to find, authors can build identity around their work, and readers can follow both people and topics that matter to them.

@@ -27,12 +27,12 @@ use Illuminate\Support\Facades\Route;
 // });
 
 //<------------------------------ Users Routes ------------------------------>
-Route::post('/login', [UserController::class,'login'])->name('user.login');
+Route::post('users/create', [UserController::class, 'create'])->name('user.create');
+Route::post('/login', [UserController::class, 'login'])->name('user.login');
 Route::middleware('auth:sanctum')->post('/logout', [UserController::class, 'logout'])->name('user.logout');
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('users', [UserController::class, 'index'])->name('user.show');
-    Route::post('users/create', [UserController::class, 'create'])->name('user.create');
     Route::delete('users/delete/{id}', [UserController::class, 'delete'])->name('user.delete');
     Route::patch('users/update/{id}', [UserController::class, 'update'])->name('user.update');
 });

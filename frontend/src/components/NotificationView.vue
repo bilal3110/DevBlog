@@ -5,9 +5,6 @@
     </div>
     <div class="notificationCard" v-if="notifications.length > 0">
       <div class="n-item" v-for="(notification, index) in notifications" :key="index" @click="handleNotificationClick(notification)">
-        <!-- <div class="n-icon">
-          <i :class="notification.icon"></i>
-        </div> -->
         <div class="n-content">
           <h3>{{ notification.title }}</h3>
           <p>{{ notification.message }}</p>
