@@ -98,7 +98,7 @@ const handleLogout = async () => {
 
 <style scoped>
 .sidebar-container {
-  width: 250px;
+  width: 300px;
   flex-shrink: 0;
 }
 
@@ -159,7 +159,7 @@ const handleLogout = async () => {
   display: flex;
   align-items: center;
   gap: 14px;
-  width: 100%;
+  width: 90%;
   padding: 12px 14px;
   border-radius: 8px;
   text-decoration: none;

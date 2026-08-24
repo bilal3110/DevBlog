@@ -1,276 +1,214 @@
 # DevBlogs
 
-DevBlogs is a developer-focused blogging and knowledge-sharing platform built with a Laravel API backend and a Vue 3 frontend. It is designed as a place where developers can publish technical posts, discover content by tags, interact through likes and comments, follow other writers, and receive notifications when people engage with their work.
+DevBlogs is a full-stack, developer-focused blogging and knowledge-sharing platform built with a **Laravel 10 REST API** backend and a **Vue 3** frontend. It is designed as a collaborative space where developers can publish rich technical articles, discover trending topics, interact through real-time likes and comments, follow other writers, and receive in-app notifications.
 
-## Problem It Solves
+---
 
-Developers often share knowledge across disconnected channels: social feeds, long-form blogs, chat communities, snippets, and personal portfolios. That makes useful technical writing harder to discover, harder to organize, and harder to connect back to the people creating it.
+## 🚀 Key Features
 
-DevBlogs solves this by bringing publishing, discovery, and social engagement into one focused experience:
+* **Full Authentication & Session Persistence:** Secure token-based authentication using Laravel Sanctum with Pinia state management and persistent browser sessions.
+* **Developer Profiles & Settings:** Public profiles (`/profile/:id`) with follower/following metrics, social links (GitHub & Portfolio), published articles history, and profile customization (`/settings`) with avatar uploads.
+* **Rich Article Publishing:** Article composer (`/createpost`) with full Quill rich text editing, code block formatting, multi-tag chips, and cover image file uploads.
+* **Full Post Detail View:** Dedicated article page (`/posts/:slug`) rendering formatted HTML content, author metadata, tag badges, like counts, and multi-platform sharing.
+* **Interactive Comments Thread:** Full CRUD comment system on articles (create, edit, delete) with ownership authorization and real-time counter updates.
+* **Optimistic Likes & Follows:** Instant UI updates when toggling likes on posts or following/unfollowing developers with background API synchronization.
+* **Dynamic Feed Filtering:** Home feed tabs for **For You** (latest articles), **My Feed** (articles from followed developers only), and **Trending** (most engaged posts).
+* **Live Discovery & Search:** Explore view (`/explore`) featuring real-time search for both articles and developers, trending tags (last 7 days), all tags, and tag-filtered post feeds.
+* **Social Sharing:** One-click sharing to X (Twitter), LinkedIn, Facebook, WhatsApp, native Web Share API, and clipboard copy with backend share tracking.
+* **Notification Center:** Real-time notifications for likes, comments, and new followers with unread badges, mark single as read, and "mark all as read".
+* **3-Column Responsive Layout:** Fixed left sidebar navigation, centralized main feed, and right sidebar with trending topics and suggested developers.
 
-- Writers can create structured technical posts with rich text, images, and tags.
-- Readers can browse posts, explore trending topics, and interact with content.
-- Authors get feedback through likes, comments, follows, shares, and notifications.
-- Profiles can connect writing to a developer's GitHub and portfolio presence.
+---
 
-## Vision
+## 🛠️ Tech Stack
 
-The vision for DevBlogs is to become a lightweight community platform for developers who want something more focused than a generic social network and more interactive than a static blog. The long-term direction is a product where developers can build a reputation through useful writing, follow topics they care about, discover emerging technical conversations, and keep their public developer identity connected in one place.
+### Backend
+* **Framework:** Laravel 10 (PHP 8.1+)
+* **Authentication:** Laravel Sanctum (Bearer Tokens)
+* **Database & ORM:** MySQL with Eloquent ORM & Migrations
+* **File Storage:** Laravel Storage with public symlink (`/storage`)
+* **API Documentation:** Scribe
+* **Testing & Quality:** PHPUnit & Laravel Pint
 
-## Current Features
+### Frontend
+* **Framework:** Vue 3 (Composition API)
+* **Build Tool:** Vite 7
+* **Routing:** Vue Router 4 (with `requiresAuth` and `guestOnly` navigation guards)
+* **State Management:** Pinia
+* **Rich Text Editor:** Vue Quill (`@vueup/vue-quill`)
+* **Styling:** Modern dark theme with CSS custom properties & Font Awesome 6
+* **Testing & Quality:** Vitest, Playwright, ESLint, Prettier
 
-- User registration, login, and token-based logout with Laravel Sanctum.
-- User profile fields for name, email, bio, avatar, GitHub URL, and portfolio URL.
-- Blog post creation, editing, deletion, listing, and slug-based lookup.
-- Unique post slugs generated from titles.
-- Optional cover image upload for posts.
-- Rich text editor on the frontend using Quill.
-- Tag creation and post-tag syncing.
-- Explore page with top/all tag views.
-- Trending tags API based on posts created within the last seven days.
-- Like and unlike support for posts.
-- Comment creation, listing, editing, and deletion.
-- Follow and unfollow support between users.
-- Follower and following count/list endpoints.
-- Notification records for likes, comments, and follows.
-- Mark one notification or all notifications as read.
-- Share tracking by platform and share-link generation.
-- Vue frontend layout with left navigation, main content, and right sidebar.
-- Frontend routes for home, explore, create post, and notifications.
+---
 
-## Tech Stack
-
-**Backend**
-
-- PHP 8.1+
-- Laravel 10
-- Laravel Sanctum for API token authentication
-- Eloquent ORM and Laravel migrations
-- MySQL-compatible database
-- Scribe for API documentation support
-- PHPUnit for backend testing
-- Laravel Pint for code style
-
-**Frontend**
-
-- Vue 3
-- Vite
-- Vue Router
-- Pinia
-- Vue Quill / Quill rich text editing
-- Vitest for unit testing
-- Playwright for end-to-end testing
-- ESLint and Prettier
-
-## Project Structure
+## 📁 Project Structure
 
 ```text
 DevBlogs/
-|-- backend/          # Laravel API application
+|-- backend/                     # Laravel 10 REST API
 |   |-- app/
-|   |-- database/
-|   |-- routes/
-|   `-- tests/
-|-- frontend/         # Vue 3 + Vite application
+|   |   |-- Http/Controllers/    # UserController, PostController, CommentController, etc.
+|   |   |-- Models/              # User, Blog, Tags, Comments, Likes, Follows, Notifications, Share
+|   |   `-- Helpers/             # Notify helper
+|   |-- config/                  # cors.php, sanctum.php, etc.
+|   |-- database/migrations/     # Database schemas
+|   |-- routes/                  # api.php, web.php
+|   `-- tests/                   # Feature & Unit tests
+|-- frontend/                    # Vue 3 + Vite SPA
 |   |-- src/
-|   |-- e2e/
-|   `-- public/
-|-- vendor/           # Composer dependencies currently present in the workspace
+|   |   |-- components/          # BlogCard, CreatePost, ExploreView, LeftSide, RightSide, NavBar, NotificationView
+|   |   |-- views/               # HomeView, ExploreView, PostDetailView, CreatePostView, NotificationsView, ProfileView, SettingsView, LoginView, RegisterView
+|   |   |-- stores/              # auth.js (Pinia store)
+|   |   |-- utils/               # api.js (Centralized API client & getImageUrl helper)
+|   |   |-- router/              # index.js (Route definitions & auth guards)
+|   |   `-- assets/              # base.css, main.css
+|   `-- e2e/                     # Playwright tests
+|-- PROJECT_ANALYSIS_AND_INTEGRATION_GUIDE.md # Detailed specification & API reference
 `-- README.md
 ```
 
-## Backend Overview
+---
 
-The backend exposes a JSON API from `backend/routes/api.php`.
+## 🌐 API Reference
 
-Important domains:
+Base URL: `http://127.0.0.1:8000/api`
 
-- `UserController`: register users, login, logout, list/update/delete users.
-- `PostController`: create, list, update, delete, and show blog posts.
-- `CommentController`: add, list, edit, and delete post comments.
-- `LikeController`: toggle post likes and list likes for a post.
-- `FollowerController`: follow/unfollow users and list followers/following.
-- `NotificationController`: list notifications and mark them as read.
-- `TagsController`: list tags, get posts by tag, and calculate trending tags.
-- `ShareController`: track post shares and generate share links.
+### Authentication & Users
+| Method | Endpoint | Auth | Description |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/users/create` | Public | Register new user (with optional avatar) |
+| `POST` | `/login` | Public | Login and receive Sanctum Bearer token |
+| `GET` | `/user` | Sanctum | Get current authenticated user details |
+| `POST` | `/logout` | Sanctum | Invalidate user tokens |
+| `GET` | `/users` | Public | List / search users (`?search=`, `?limit=`, `?exclude_me=1`) |
+| `GET` | `/users/{id}` | Public | Get single user profile with follower stats |
+| `MATCH` (`PATCH`/`POST`) | `/users/update/{id}` | Sanctum | Update user profile, password, or avatar |
+| `DELETE` | `/users/delete/{id}` | Sanctum | Delete user account (owner only) |
 
-Main data models:
+### Blog Posts
+| Method | Endpoint | Auth | Description |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/posts` | Public | Get posts (`?tab=feed\|trending`, `?tag=`, `?search=`, `?user_id=`) |
+| `GET` | `/posts/show/{slug}` | Public | Get single post details by slug with author, tags, and comments |
+| `POST` | `/posts/create` | Sanctum | Create post with title, Quill HTML, cover image, and tags |
+| `MATCH` (`PATCH`/`POST`) | `/posts/update/{id}` | Sanctum | Update post title, content, cover image, and tags (author only) |
+| `DELETE` | `/posts/delete/{id}` | Sanctum | Delete post and associated assets (author only) |
 
-- `User`
-- `Blog`
-- `Tags`
-- `BlogTags`
-- `Comments`
-- `Likes`
-- `Follows`
-- `Notifications`
-- `Share`
+### Comments & Likes
+| Method | Endpoint | Auth | Description |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/posts/comments/show/{id}` | Public | Get comments for a post (`id` = post ID) |
+| `POST` | `/posts/comments/create/{id}` | Sanctum | Post a comment on article (`id` = post ID) |
+| `PATCH` | `/posts/comments/edit/{id}` | Sanctum | Edit a comment (`id` = comment ID, owner only) |
+| `DELETE` | `/posts/comments/delete/{id}` | Sanctum | Delete a comment (`id` = comment ID, owner/author only) |
+| `GET` | `/posts/likes/show/{id}` | Public | Get likes list and count for post (`id` = post ID) |
+| `POST` | `/posts/likes/create/{id}` | Sanctum | Toggle like / unlike on post (`id` = post ID) |
 
-## API Highlights
+### Followers, Tags, Notifications & Sharing
+| Method | Endpoint | Auth | Description |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/users/follow/{id}` | Sanctum | Toggle follow / unfollow on developer (`id` = target user ID) |
+| `GET` | `/users/followers/{id}` | Public | Get followers list for user |
+| `GET` | `/users/following/{id}` | Public | Get following list for user |
+| `GET` | `/tags` | Public | List all tags |
+| `GET` | `/tags/posts/{id}` | Public | Get posts by tag ID or slug |
+| `GET` | `/tags/trending` | Public | Get trending tags (calculated by recent post count) |
+| `GET` | `/notifications` | Sanctum | Get all notifications for current user with `unread_count` |
+| `POST` | `/notifications/{id}/read` | Sanctum | Mark single notification as read |
+| `POST` | `/notifications/read/all` | Sanctum | Mark all notifications as read |
+| `POST` | `/post/share/{id}` | Sanctum | Record post share by platform |
+| `GET` | `/post/share/link/{id}` | Public | Get canonical shareable link for post |
 
-Public endpoints:
+---
 
-```text
-POST /api/users/create
-POST /api/login
-GET  /api/posts
-GET  /api/posts/show/{slug}
-GET  /api/users/followers/{id}
-GET  /api/users/following/{id}
-```
-
-Authenticated endpoints use Sanctum tokens and include:
-
-```text
-POST   /api/logout
-GET    /api/users
-PATCH  /api/users/update/{id}
-DELETE /api/users/delete/{id}
-
-POST   /api/posts/create
-PATCH  /api/posts/update/{id}
-DELETE /api/posts/delete/{id}
-
-POST   /api/posts/comments/create/{id}
-GET    /api/posts/comments/show/{id}
-PATCH  /api/posts/comments/edit/{id}
-DELETE /api/posts/comments/delete/{id}
-
-POST   /api/posts/likes/create/{id}
-GET    /api/posts/likes/show/{id}
-
-POST   /api/users/follow/{id}
-
-GET    /api/notifications
-POST   /api/notifications/{id}/read
-POST   /api/notifications/read/all
-
-GET    /api/tags
-GET    /api/tags/posts/{id}
-GET    /api/tags/trending
-
-POST   /api/post/share/{id}
-GET    /api/post/share/link/{id}
-```
-
-## Frontend Overview
-
-The Vue app is organized around a persistent three-column layout:
-
-- Left sidebar: app navigation, logo, profile shortcut, settings/logout links.
-- Main area: routed views.
-- Right sidebar: trending tags and people suggestions.
-
-Main frontend routes:
-
-```text
-/               Home feed
-/explore        Tag and user discovery
-/createpost     Rich-text post composer
-/notifications  Notifications list
-```
-
-Some frontend components currently use sample/static data while the API layer is being connected. The backend already contains the main endpoints needed to power those screens.
-
-## Local Setup
+## ⚡ Local Setup Guide
 
 ### Prerequisites
+* PHP 8.1 or newer
+* Composer
+* Node.js 18+ and npm
+* MySQL / MariaDB (e.g., via Laragon, XAMPP, or native MySQL)
 
-- PHP 8.1 or newer
-- Composer
-- Node.js and npm
-- MySQL or a compatible database
+---
 
-### Backend
+### 1. Backend Setup
 
-```bash
-cd backend
-composer install
-copy .env.example .env
-php artisan key:generate
-```
+1. Navigate to the backend directory:
+   ```bash
+   cd backend
+   ```
+2. Install Composer dependencies:
+   ```bash
+   composer install
+   ```
+3. Create `.env` file and generate application key:
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
+4. Configure your database settings in `backend/.env`:
+   ```env
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=devblogs
+   DB_USERNAME=root
+   DB_PASSWORD=
+   ```
+5. Run migrations and create the storage link:
+   ```bash
+   php artisan migrate
+   php artisan storage:link
+   ```
+6. Start the Laravel API server:
+   ```bash
+   php artisan serve
+   ```
+   *The backend will run at `http://127.0.0.1:8000`.*
 
-Update the database values in `backend/.env`:
+---
 
-```env
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=devblogs
-DB_USERNAME=root
-DB_PASSWORD=
-```
+### 2. Frontend Setup
 
-Run migrations and start the API:
+1. Navigate to the frontend directory:
+   ```bash
+   cd frontend
+   ```
+2. Install Node dependencies:
+   ```bash
+   npm install
+   ```
+3. Configure environment variables in `frontend/.env`:
+   ```env
+   VITE_API_BASE_URL=http://127.0.0.1:8000/api
+   VITE_STORAGE_BASE_URL=http://127.0.0.1:8000/storage
+   ```
+4. Start the Vite development server:
+   ```bash
+   npm run dev
+   ```
+   *The frontend will run at `http://localhost:5173` (or `http://localhost:5174`).*
 
-```bash
-php artisan migrate
-php artisan storage:link
-php artisan serve
-```
+---
 
-By default, the backend runs at:
+## 🧪 Testing & Quality Assurance
 
-```text
-http://127.0.0.1:8000
-```
-
-### Frontend
-
-```bash
-cd frontend
-npm install
-```
-
-Create `frontend/.env` and point the app to the Laravel API:
-
-```env
-VITE_API_BASE_URL=http://127.0.0.1:8000/api
-```
-
-Start the frontend:
-
-```bash
-npm run dev
-```
-
-## Testing And Quality
-
-Backend:
-
+### Run Backend Tests
 ```bash
 cd backend
 php artisan test
-./vendor/bin/pint
 ```
 
-Frontend:
-
+### Run Frontend Tests, Linting & Build
 ```bash
 cd frontend
-npm run test:unit
-npm run test:e2e
-npm run lint
-npm run build
+npm run test:unit      # Vitest unit tests
+npm run lint           # ESLint fix & check
+npm run build          # Production Vite build
 ```
 
-## Current Status
+---
 
-DevBlogs has a functional Laravel API foundation with authentication, posts, tags, likes, comments, follows, notifications, and sharing. The Vue frontend has the main layout and screens in place, including a rich-text post creation UI, but several components still use placeholder data and need full API integration.
+## 📄 License
 
-## Roadmap
-
-- Connect all frontend screens to the Laravel API.
-- Add dedicated login, registration, profile, settings, and post detail pages.
-- Improve authorization so users can only edit/delete their own content where appropriate.
-- Add feed personalization based on followed users and selected tags.
-- Add search for posts, users, and tags.
-- Add pagination for feeds, comments, notifications, and tag pages.
-- Add richer notification UX and possibly real-time updates.
-- Add stronger validation, error handling, and empty/loading states in the frontend.
-- Expand automated tests for API behavior and frontend workflows.
-- Generate and publish API documentation from Scribe.
-
-## Why This Project Matters
-
-DevBlogs is not just a CRUD blog. Its value comes from combining content publishing with developer-specific discovery and social feedback. The project creates a foundation for a community where technical posts are easier to find, authors can build identity around their work, and readers can follow both people and topics that matter to them.
+This project is open-source software licensed under the [MIT license](https://opensource.org/licenses/MIT).
