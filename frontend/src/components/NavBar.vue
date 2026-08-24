@@ -2,10 +2,32 @@
   <div class="navbar">
     <nav class="nav-menu">
       <ul class="nav-items">
-        <li v-for="link in list" :key="link.id" class="nav-item">
-          <a :to="link.href" class="navbar-link" :class="{ active: $route.path === link.href }">
-            <span class="navText">{{ link.navText }}</span>
-          </a>
+        <li class="nav-item">
+          <button
+            class="navbar-link"
+            :class="{ active: activeTab === 'forYou' }"
+            @click="$emit('tab-change', 'forYou')"
+          >
+            <span class="navText">For You</span>
+          </button>
+        </li>
+        <li class="nav-item">
+          <button
+            class="navbar-link"
+            :class="{ active: activeTab === 'feed' }"
+            @click="$emit('tab-change', 'feed')"
+          >
+            <span class="navText">My Feed</span>
+          </button>
+        </li>
+        <li class="nav-item">
+          <button
+            class="navbar-link"
+            :class="{ active: activeTab === 'trending' }"
+            @click="$emit('tab-change', 'trending')"
+          >
+            <span class="navText">Trending</span>
+          </button>
         </li>
       </ul>
     </nav>
@@ -13,50 +35,40 @@
 </template>
 
 <script setup>
-import { useRoute } from 'vue-router';
-
-const $route = useRoute();
-
 defineProps({
-  list: {
-    type: Array,
-    default: () => [
-      { id: 1, navText: 'My Feed', href: '/feed' },
-      { id: 2, navText: 'For You', href: '/forYou'},
-      { id: 3, navText: 'Trending', href: '/trending' },
-      { id: 4, navText: 'Profile', href: '/profile' },
-    ],
+  activeTab: {
+    type: String,
+    default: 'forYou',
   },
 });
+
+defineEmits(['tab-change']);
 </script>
 
 <style scoped>
-/* Navbar container */
 .navbar {
-  position: fixed;
+  position: sticky;
   top: 0;
-  height: 60px;
-  width: 550px;
+  height: 56px;
+  width: 100%;
+  max-width: 550px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  z-index: 1100;
+  z-index: 100;
   display: flex;
   align-items: center;
-  padding: 0 20px;
+  padding: 0 10px;
   background: var(--bg-dark);
+  backdrop-filter: blur(10px);
 }
 
-/* Navigation menu */
 .nav-menu {
   width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
 }
 
 .nav-items {
   list-style: none;
   display: flex;
-  justify-content: center;
-  gap: 20px;
+  justify-content: space-around;
   padding: 0;
   margin: 0;
 }
@@ -67,47 +79,28 @@ defineProps({
 }
 
 .navbar-link {
-  text-decoration: none;
+  background: none;
+  border: none;
+  color: #8b949e;
   font-size: 14px;
-  font-weight: 500;
-  padding: 8px 12px;
+  font-weight: 600;
+  padding: 8px 16px;
   border-radius: 6px;
-  transition: background-color 0.2s ease, color 0.2s ease;
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .navbar-link:hover {
-  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--text-dark);
+  background-color: rgba(255, 255, 255, 0.08);
 }
 
 .navbar-link.active {
+  color: #000;
   background-color: var(--accent);
 }
 
 .navText {
   font-size: 14px;
-}
-
-/* Ensure focusable elements for keyboard navigation */
-.navbar-link:focus {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
-
-/* Responsive design */
-@media (max-width: 768px) {
-  .navbar {
-    height: 50px;
-    padding: 0 15px;
-  }
-
-  .nav-items {
-    gap: 10px;
-  }
-
-  .navbar-link {
-    font-size: 12px;
-    padding: 6px 8px;
-  }
 }
 </style>

@@ -15,14 +15,26 @@ class FollowerController extends Controller
         if (!$followed) {
             return response()->json(['error' => 'User not found'], 404);
         }
+
+        if ($user->id == $followed->id) {
+            return response()->json(['error' => 'You cannot follow yourself'], 400);
+        }
+
         if ($user->isFollowing($followed)) {
             $user->unfollow($followed);
-            return response()->json(['message' => 'Unfollowed'], 200);
+            return response()->json([
+                'message' => 'Unfollowed',
+                'following' => false,
+                'total_followers' => $followed->followers()->count()
+            ], 200);
         } else {
             $user->follow($followed);
-            Notify::send($user->id, 'follow', auth()->user()->name . ' started following you');
-            return response()->json(['message' => 'Followed successfully'], 200);
-
+            Notify::send($followed->id, 'follow', auth()->user()->name . ' started following you');
+            return response()->json([
+                'message' => 'Followed successfully',
+                'following' => true,
+                'total_followers' => $followed->followers()->count()
+            ], 200);
         }
     }
 
@@ -32,9 +44,10 @@ class FollowerController extends Controller
         if (!$user) {
             return response()->json(['error' => 'User not found'], 404);
         }
+        $followers = $user->followers()->with('follower:id,name,email,avatar,bio')->get()->pluck('follower');
         return response()->json([
-            'followers' => $user->followers()->get(),
-            'total' => $user->followers()->count()
+            'followers' => $followers,
+            'total' => $followers->count()
         ]);
     }
 
@@ -44,9 +57,10 @@ class FollowerController extends Controller
         if (!$user) {
             return response()->json(['error' => 'User not found'], 404);
         }
+        $following = $user->following()->with('followed:id,name,email,avatar,bio')->get()->pluck('followed');
         return response()->json([
-            'following' => $user->following()->get(),
-            'total' => $user->following()->count()
+            'following' => $following,
+            'total' => $following->count()
         ]);
     }
 }

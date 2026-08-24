@@ -9,9 +9,11 @@ class NotificationController extends Controller
 {
     public function index()
     {
-        $notifications = Notifications::where('user_id', auth()->user()->id)->get();
+        $notifications = Notifications::where('user_id', auth()->user()->id)->latest()->get();
+        $unreadCount = Notifications::where('user_id', auth()->user()->id)->where('is_read', false)->count();
         return response()->json([
-            'notifications' => $notifications
+            'notifications' => $notifications,
+            'unread_count' => $unreadCount
         ]);
     }
     public function markAsRead($id)

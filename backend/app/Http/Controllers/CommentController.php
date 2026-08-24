@@ -29,8 +29,7 @@ class CommentController extends Controller
             'user_id' => auth()->id(),
         ]);
 
-        $comment->load('user:id,name,email');
-
+        $comment->load('user:id,name,email,avatar');
 
         if(auth()->user()->id != $blog->user_id){
             Notify::send(
@@ -49,6 +48,7 @@ class CommentController extends Controller
                 'user' => [
                     'id' => $comment->user->id,
                     'name' => $comment->user->name,
+                    'avatar' => $comment->user->avatar,
                 ]
             ]
         ], 201);
@@ -64,7 +64,7 @@ class CommentController extends Controller
         }
 
         $comments = Comments::where('blog_id', $blogId)
-            ->with('user:id,name')
+            ->with('user:id,name,email,avatar')
             ->latest()
             ->get()
             ->map(function ($comment) {
@@ -75,6 +75,7 @@ class CommentController extends Controller
                     'user' => [
                         'id' => $comment->user->id,
                         'name' => $comment->user->name,
+                        'avatar' => $comment->user->avatar,
                     ]
                 ];
             });

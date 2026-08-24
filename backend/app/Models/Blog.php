@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Tags;
+use Illuminate\Support\Str;
+
 class Blog extends Model
 {
     use HasFactory;
@@ -42,7 +44,18 @@ class Blog extends Model
         $tagIds = [];
 
         foreach ($tagNames as $tagName) {
-            $baseSlug = str_replace(' ', '-', strtolower($tagName));
+            $tagName = trim($tagName);
+            if (empty($tagName)) {
+                continue;
+            }
+
+            $existing = Tags::where('name', $tagName)->first();
+            if ($existing) {
+                $tagIds[] = $existing->id;
+                continue;
+            }
+
+            $baseSlug = Str::slug($tagName) ?: 'tag';
             $slug = $baseSlug;
             $counter = 1;
 
@@ -50,9 +63,8 @@ class Blog extends Model
                 $slug = $baseSlug . '-' . $counter++;
             }
 
-            $tag = Tags::firstOrCreate([
-                'name' => $tagName
-            ], [
+            $tag = Tags::create([
+                'name' => $tagName,
                 'slug' => $slug
             ]);
 
