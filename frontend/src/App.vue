@@ -37,9 +37,10 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   min-height: 100vh;
   /* margin-left: 250px; */
-  margin-right: 280px;
+  margin-right: 340px;
   padding: 0 20px;
 }
 

@@ -1,5 +1,5 @@
 import './assets/main.css'
-import '@vueup/vue-quill/dist/vue-quill.snow.css' 
+import '@vueup/vue-quill/dist/vue-quill.snow.css'
 
 
 import { createApp } from 'vue'
@@ -12,7 +12,6 @@ const app = createApp(App)
 
 app.use(createPinia())
 app.use(router)
-// app.use(Vue3Quill)
 
 
 app.mount('#app')

@@ -3,9 +3,6 @@
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000/api';
 const STORAGE_BASE_URL = import.meta.env.VITE_STORAGE_BASE_URL || 'http://127.0.0.1:8000/storage';
 
-/**
- * Resolves full URL for an image/avatar, handling storage relative paths, external URLs, and fallbacks.
- */
 export function getImageUrl(path, fallback = 'https://i.pravatar.cc/150?img=12') {
   if (!path) return fallback;
   if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('data:')) {
@@ -15,9 +12,6 @@ export function getImageUrl(path, fallback = 'https://i.pravatar.cc/150?img=12')
   return `${STORAGE_BASE_URL}/${cleanPath}`;
 }
 
-/**
- * Helper to build URL with query params
- */
 function buildUrl(endpoint, params) {
   let url = `${API_BASE_URL}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
   if (params && Object.keys(params).length > 0) {
@@ -35,9 +29,6 @@ function buildUrl(endpoint, params) {
   return url;
 }
 
-/**
- * Central API request handler
- */
 export async function apiRequest(endpoint, options = {}) {
   const token = localStorage.getItem('auth_token');
   const headers = {
@@ -50,7 +41,6 @@ export async function apiRequest(endpoint, options = {}) {
   }
 
   let body = options.body;
-  // If body is plain object and not FormData, serialize as JSON
   if (body && !(body instanceof FormData) && typeof body === 'object') {
     headers['Content-Type'] = 'application/json';
     body = JSON.stringify(body);
@@ -76,7 +66,6 @@ export async function apiRequest(endpoint, options = {}) {
 
     if (!response.ok) {
       if (response.status === 401) {
-        // Clear token if invalid
         localStorage.removeItem('auth_token');
         localStorage.removeItem('auth_user');
       }

@@ -1,4 +1,3 @@
-// src/stores/auth.js
 import { defineStore } from 'pinia';
 import api, { getImageUrl } from '../utils/api';
 
@@ -85,7 +84,6 @@ export const useAuthStore = defineStore('auth', {
         localStorage.setItem('auth_user', JSON.stringify(user));
         return user;
       } catch {
-        // If fetch fails with 401, clear auth
         this.user = null;
         this.token = null;
         localStorage.removeItem('auth_token');
@@ -100,7 +98,6 @@ export const useAuthStore = defineStore('auth', {
       try {
         const targetId = userId || this.user?.id;
         const response = await api.post(`/users/update/${targetId}`, formData, {
-          // If sending FormData with files in PHP, some servers expect POST with _method=PATCH or PATCH
         });
         if (response.user) {
           this.user = { ...this.user, ...response.user };

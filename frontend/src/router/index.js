@@ -63,7 +63,6 @@ const routes = [
     meta: { guestOnly: true },
   },
   {
-    // Catch-all 404 redirect to home
     path: '/:pathMatch(.*)*',
     redirect: '/',
   },
